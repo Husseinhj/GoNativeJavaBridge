@@ -43,6 +43,6 @@ public interface GoNativeWebviewInterface {
     LeanWebView.OnSwipeListener getOnSwipeListener();
     void setOnSwipeListener(LeanWebView.OnSwipeListener listener);
 
-//    void removeJSInterface(String name);
-//    void addJSInterface(Object object, String name);
+    void removeJSInterface(String name);
+    void addJSInterface(Object object, String name);
 }

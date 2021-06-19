@@ -85,16 +85,16 @@ import java.util.regex.Pattern;
 
 import io.gonative.android.library.AppConfig;
 
-//class JsEventBridgeObject {
-//
-//    public Context mContext = null;
-//    public JsEventBridgeObject(Context context) {
-//        this.mContext = context;
-//    }
-//
-//    @JavascriptInterface
-//    public void addToCartFunction() { Toast.makeText(this.mContext, "Chabok add-to-cart method called from JS module", Toast.LENGTH_LONG).show(); }
-//}
+class JsEventBridgeObject {
+
+    public Context mContext = null;
+    public JsEventBridgeObject(Context context) {
+        this.mContext = context;
+    }
+
+    @JavascriptInterface
+    public void addToCartFunction() { Toast.makeText(this.mContext, "Chabok add-to-cart method called from JS module", Toast.LENGTH_LONG).show(); }
+}
 
 public class MainActivity extends AppCompatActivity implements Observer,
         SwipeRefreshLayout.OnRefreshListener,
@@ -323,7 +323,14 @@ public class MainActivity extends AppCompatActivity implements Observer,
         if (url != null) {
             this.initialUrl = url;
             this.mWebview.loadUrl(url);
-//            this.mWebview.addJSInterface(new JsEventBridgeObject(this), "jsEventBridgeHandler");
+            this.mWebview.addJSInterface(new JsEventBridgeObject(this), "jsEventBridgeHandler");
+
+            // PUT following code into your js project
+            /*
+            if (navigator.userAgent.indexOf('gonative') > -1) {
+                jsEventBridgeHandler.addToCartFunction();
+            }
+            * */
         } else if (intent.getBooleanExtra(EXTRA_WEBVIEW_WINDOW_OPEN, false)){
             // no worries, loadUrl will be called when this new web view is passed back to the message
         } else {

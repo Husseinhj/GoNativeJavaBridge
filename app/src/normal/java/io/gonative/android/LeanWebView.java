@@ -1,6 +1,6 @@
 package io.gonative.android;
 
-//import android.annotation.SuppressLint;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -230,16 +230,16 @@ public class LeanWebView extends WebView implements GoNativeWebviewInterface {
         this.onSwipeListener = onSwipeListener;
     }
 
-//    @Override
-//    public void removeJSInterface(String name) {
-//        this.removeJavascriptInterface(name);
-//    }
-//
-//    @SuppressLint("JavascriptInterface")
-//    @Override
-//    public void addJSInterface(Object object, String name) {
-//        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
-//            this.addJavascriptInterface(object, name);
-//        }
-//    }
+    @Override
+    public void removeJSInterface(String name) {
+        this.removeJavascriptInterface(name);
+    }
+
+    @SuppressLint("JavascriptInterface")
+    @Override
+    public void addJSInterface(Object object, String name) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            this.addJavascriptInterface(object, name);
+        }
+    }
 }
