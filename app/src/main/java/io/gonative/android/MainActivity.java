@@ -27,7 +27,6 @@ import androidx.fragment.app.DialogFragment;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.ActionBar;
@@ -58,8 +57,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.adpdigital.push.AdpPushClient;
-import com.adpdigital.push.ChabokEvent;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.facebook.applinks.AppLinkData;
 import com.onesignal.OSPermissionSubscriptionState;
@@ -75,7 +72,6 @@ import java.net.CookieHandler;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -86,58 +82,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.chabok.gonative.ChabokGoNativeBridgeObject;
 import io.gonative.android.library.AppConfig;
-
-class ChabokGoNativeBridgeObject {
-
-    public Context mContext = null;
-    public ChabokGoNativeBridgeObject(Context context) {
-        this.mContext = context;
-    }
-
-    @JavascriptInterface
-    public void login(String userId) {
-        AdpPushClient.get().login(userId);
-    }
-
-    @JavascriptInterface
-    public void track(String eventName) {
-        AdpPushClient.get().track(eventName);
-    }
-
-    @JavascriptInterface
-    public void track(String eventName, String dataStr) {
-        try {
-            JSONObject jsonData = new JSONObject(dataStr);
-            AdpPushClient.get().track(eventName, jsonData);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @JavascriptInterface
-    public void trackPurchase(String eventName, String dataStr) {
-        try {
-            JSONObject jsonData = new JSONObject(dataStr);
-            double revenue = jsonData.getDouble("revenue");
-
-            ChabokEvent chabokEvent = new ChabokEvent(revenue);
-            if (jsonData.has("currency")) {
-                String currency = jsonData.getString("Currency");
-                chabokEvent.setRevenue(revenue, currency);
-            }
-            if (jsonData.has("data")) {
-                JSONObject data = jsonData.getJSONObject("data");
-                chabokEvent.setData(data);
-            }
-
-            AdpPushClient.get().trackPurchase(eventName, chabokEvent);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-}
 
 public class MainActivity extends AppCompatActivity implements Observer,
         SwipeRefreshLayout.OnRefreshListener,
