@@ -58,6 +58,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.adpdigital.push.AdpPushClient;
+import com.adpdigital.push.ChabokEvent;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.facebook.applinks.AppLinkData;
 import com.onesignal.OSPermissionSubscriptionState;
@@ -73,6 +75,7 @@ import java.net.CookieHandler;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -85,15 +88,55 @@ import java.util.regex.Pattern;
 
 import io.gonative.android.library.AppConfig;
 
-class JsEventBridgeObject {
+class ChabokGoNativeBridgeObject {
 
     public Context mContext = null;
-    public JsEventBridgeObject(Context context) {
+    public ChabokGoNativeBridgeObject(Context context) {
         this.mContext = context;
     }
 
     @JavascriptInterface
-    public void addToCartFunction() { Toast.makeText(this.mContext, "Chabok add-to-cart method called from JS module", Toast.LENGTH_LONG).show(); }
+    public void login(String userId) {
+        AdpPushClient.get().login(userId);
+    }
+
+    @JavascriptInterface
+    public void track(String eventName) {
+        AdpPushClient.get().track(eventName);
+    }
+
+    @JavascriptInterface
+    public void track(String eventName, String dataStr) {
+        try {
+            JSONObject jsonData = new JSONObject(dataStr);
+            AdpPushClient.get().track(eventName, jsonData);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @JavascriptInterface
+    public void trackPurchase(String eventName, String dataStr) {
+        try {
+            JSONObject jsonData = new JSONObject(dataStr);
+            double revenue = jsonData.getDouble("revenue");
+
+            ChabokEvent chabokEvent = new ChabokEvent(revenue);
+            if (jsonData.has("currency")) {
+                String currency = jsonData.getString("Currency");
+                chabokEvent.setRevenue(revenue, currency);
+            }
+            if (jsonData.has("data")) {
+                JSONObject data = jsonData.getJSONObject("data");
+                chabokEvent.setData(data);
+            }
+
+            AdpPushClient.get().trackPurchase(eventName, chabokEvent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 public class MainActivity extends AppCompatActivity implements Observer,
@@ -323,12 +366,12 @@ public class MainActivity extends AppCompatActivity implements Observer,
         if (url != null) {
             this.initialUrl = url;
             this.mWebview.loadUrl(url);
-            this.mWebview.addJSInterface(new JsEventBridgeObject(this), "jsEventBridgeHandler");
+            this.mWebview.addJSInterface(new ChabokGoNativeBridgeObject(this), "ChabokBridge");
 
             // PUT following code into your js project
             /*
             if (navigator.userAgent.indexOf('gonative') > -1) {
-                jsEventBridgeHandler.addToCartFunction();
+                ChabokBridge.track("GO_NATIVE");
             }
             * */
         } else if (intent.getBooleanExtra(EXTRA_WEBVIEW_WINDOW_OPEN, false)){

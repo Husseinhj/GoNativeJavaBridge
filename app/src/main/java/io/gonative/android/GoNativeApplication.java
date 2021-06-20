@@ -11,6 +11,8 @@ import android.util.Log;
 import android.webkit.ValueCallback;
 import android.widget.Toast;
 
+import com.adpdigital.push.AdpPushClient;
+import com.adpdigital.push.config.Environment;
 import com.facebook.FacebookSdk;
 import com.onesignal.OSSubscriptionObserver;
 import com.onesignal.OSSubscriptionState;
@@ -44,6 +46,7 @@ public class GoNativeApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+        AdpPushClient.configureEnvironment(Environment.PRODUCTION);
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
         AppConfig appConfig = AppConfig.getInstance(this);
