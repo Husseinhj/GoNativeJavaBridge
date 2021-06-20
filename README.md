@@ -1,4 +1,4 @@
-gonative-android
+chabok-gonative-android-bridge
 ================
 
 This is the native Android code used by https://gonative.io/
